@@ -30,7 +30,7 @@ var user_destination = "XXXXXX"; // keep it as XXXXXX as it will be replaced lat
 
 // 2. Google Maps Directions API Related Data
 // 2a. API Key - Unique for every user
-var google_api_key = "AIzaSyDLP0z7zRLCIQMziYWxvNBbA9y4zqpdvlE"; // CHANGE IT WITH YOUR API KEY
+var google_api_key = process.env.google_api_key; // API KEY
 
 // 2b. Setting the configurable options for the API
 var google_api_traffic_model = "best_guess"; // For driving only - it can be optimistic & pessimistic too
