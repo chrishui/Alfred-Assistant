@@ -374,7 +374,7 @@ const GetRoute = {
         
         // SSML - Speech Synthesis Markup Language
         // Documentation: https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html
-        speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will reach around " +
+        speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will arrive at around " +
                      "<say-as interpret-as='time'>" + timeinhhmm + "</say-as> if you leave within 5 minutes"; 
        
      } else {
