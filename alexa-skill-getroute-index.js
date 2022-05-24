@@ -1,19 +1,6 @@
 const Alexa = require("ask-sdk-core");
 const actions = require('./functions');
 
-const Quotes = {
-  Lincoln: [
-      "Government of the people, by the people, for the people, shall not perish from the Earth.",
-      "Nearly all men can stand adversity, but if you want to test a man's character, give him power.",
-      "Whatever you are, be a good one."
-      ],
-  Einstein: [
-      "Imagination is more important than knowledge.",
-      "If the facts don't fit the theory, change the facts.",
-      "Life is like riding a bicycle. To keep your balance you must keep moving."
-      ]
-};
-
 // Bookmarked Places and their coordinates
 // Future Upgrade - make them come from a database like DynamoDB
 // NOTE: All entries to be in lower case, and no space between coordinates
@@ -30,7 +17,7 @@ var user_destination = "XXXXXX"; // keep it as XXXXXX as it will be replaced lat
 
 // 2. Google Maps Directions API Related Data
 // 2a. API Key - Unique for every user
-var google_api_key = process.env.google_api_key; // API KEY
+var google_api_key = process.env.google_api_key; // CHANGE IT WITH YOUR API KEY
 
 // 2b. Setting the configurable options for the API
 var google_api_traffic_model = "best_guess"; // For driving only - it can be optimistic & pessimistic too
@@ -52,7 +39,7 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   "&departure_time=" +
   google_api_departure_time +
   "&key=" +
-  google_api_key
+  google_api_key;
 
 // Launch Request Handler -- When a skill is launched
 const LaunchRequestHandler = {
@@ -74,61 +61,6 @@ const LaunchRequestHandler = {
       .speak(speechText)
       .reprompt(repromptText)
       .getResponse();
-  }
-};
-
-// Handler for Random Quote
-const RandomQuote = {
-  canHandle(handlerInput) {
-      return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-        handlerInput.requestEnvelope.request.intent.name === 'RandomQuote';
-  },
-  handle(handlerInput) {
-      console.log("RandomQuote intent handler called");
-      
-      let getQuote = actions.getQuote(Quotes);
-      let author = getQuote[0];
-      let quote = getQuote[1];
-      
-      let cardTitle = "Quotation from " + author;
-      let cardContent = quote;
-      let speechText = author + " said " + quote;
-      
-      return handlerInput.responseBuilder
-        .speak(speechText)
-        .withSimpleCard(cardTitle, cardContent)
-        .getResponse();
-  }
-};
-
-const AuthorQuote = {
-  canHandle(handlerInput) {
-      return handlerInput.requestEnvelope.request.type === 'IntentRequest' &&
-        handlerInput.requestEnvelope.request.intent.name === 'AuthorQuote';
-  },
-  handle(handlerInput) {
-      console.log("AuthorQuote Intent handler called");
-      
-      // Get the Author Name
-      let author = handlerInput.requestEnvelope.request.intent.slots.author.value;
-      
-      let getQuote = actions.getQuote(Quotes, author);
-      
-      if (!getQuote) {
-          return UnhandledHandler.handle(handlerInput);
-      }
-      
-      author = getQuote[0];
-      let quote = getQuote[1];
-      
-      let cardTitle = "Quotation from " + author;
-      let cardContent = quote;
-      let speechText = author + " said " + quote;
-      
-      return handlerInput.responseBuilder
-        .speak(speechText)
-        .withSimpleCard(cardTitle, cardContent)
-        .getResponse();
   }
 };
 
@@ -231,7 +163,6 @@ const YesIntent = {
   }
 };
 
-
 // When the user says "No" to a request
 const NoIntent = {
   canHandle(handlerInput) {
@@ -258,7 +189,7 @@ const Fallback = {
   handle(handlerInput) {
     console.log("FallbackIntent Handler called");
     
-    let speechText = "Sorry, I wasn't able to understand what you said. Thank you and good bye.";
+    let speechText = "Sorry, I wasn't able to understand what you said. Please try again.";
     
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -313,7 +244,7 @@ const GetRoute = {
      console.log("Destination is blank");
      
      let speechText = "Where would you like to go today?";
-     let repromptText = "Sorry, I did not receive any input. Do you want me to read out your bookmarked destinations?";
+     let repromptText = "Sorry, I did not receive any input. Would you like me to read out your bookmarked destinations?";
      
      handlerInput.attributesManager.setSessionAttributes({
        type: "bookmarks"
@@ -363,8 +294,9 @@ const GetRoute = {
         // to compensate for the delay it will take to get to your vehicle.
         // Then get the hour and the minute only, and not the complete date.
         let nd = new Date();
-        let ld = new Date(nd.getTime() + (seconds + 300 )* 1000);
-        let timeinhhmm = ld.toLocaleTimeString("en-US", {
+        let ld = new Date(nd.getTime() + (seconds + 300)* 1000);
+        let timeinhhmm = ld.toLocaleTimeString("en-GB", {
+          timeZone: 'Europe/London',
           hour: "2-digit",
           minute: "2-digit"
         });
@@ -374,7 +306,7 @@ const GetRoute = {
         
         // SSML - Speech Synthesis Markup Language
         // Documentation: https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html
-        speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will arrive at around " +
+        speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will arrive  around " +
                      "<say-as interpret-as='time'>" + timeinhhmm + "</say-as> if you leave within 5 minutes"; 
        
      } else {
@@ -402,7 +334,7 @@ const UnhandledHandler = {
       console.log(`Error Handler : ${error.message}`);
       
       return handlerInput.responseBuilder
-        .speak('Sorry, I am unable to understand. For help, ask Eva, and say you need Help')
+        .speak('Sorry, I am unable to understand. Please try again.')
         .getResponse();
   }
 };
@@ -410,8 +342,6 @@ const UnhandledHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
-        RandomQuote,
-        AuthorQuote,
         GetBookmarks,
         HelpIntent,
         YesIntent,
