@@ -292,11 +292,11 @@ const GetRoute = {
         
         // Initialise a new date, add 300 seconds (5 minutes) to it,
         // to compensate for the delay it will take to get to your vehicle.
-        // (23rd-May edit) also add 3600 seconds as the time is 1 hour off
         // Then get the hour and the minute only, and not the complete date.
         let nd = new Date();
-        let ld = new Date(nd.getTime() + (seconds + 300 + 3600 )* 1000);
+        let ld = new Date(nd.getTime() + (seconds + 300)* 1000);
         let timeinhhmm = ld.toLocaleTimeString("en-GB", {
+          timeZone: 'Europe/London',
           hour: "2-digit",
           minute: "2-digit"
         });
