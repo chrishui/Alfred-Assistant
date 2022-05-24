@@ -244,7 +244,7 @@ const GetRoute = {
      console.log("Destination is blank");
      
      let speechText = "Where would you like to go today?";
-     let repromptText = "Sorry, I did not receive any input. Would you like me to read out your bookmarked destinations?";
+     let repromptText = "Sorry, I did not receive a repsonse. Would you like me to read out your bookmarked destinations?";
      
      handlerInput.attributesManager.setSessionAttributes({
        type: "bookmarks"
