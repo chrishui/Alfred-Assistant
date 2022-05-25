@@ -115,7 +115,7 @@ const HelpIntent = {
     };
     handlerInput.attributesManager.setSessionAttributes(attributes);
     
-    let speechText = "I have the ability to read out quotes and get route information. To read out quotes, you can try saying, ask Eva for a random quote, or ask Eva for a quote from Einstein. To get route information you can try saying, ask Eva, how much time will it take you to reach office? I also have a few places bookmarked for easy access. Do you want me to read them out to you?";
+    let speechText = "I have the ability to get travel route information to a destination of your choosing. I also have a few locations bookmarked for easy access. Would you like me to read them out to you?";
     
     let repromptText = "Sorry, I did not receive any input. Do you want me to read out your bookmarked destinations?";
     
