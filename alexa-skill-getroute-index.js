@@ -23,10 +23,11 @@ var google_api_key = process.env.google_api_key; // CHANGE IT WITH YOUR API KEY
 var google_api_traffic_model = "best_guess"; // For driving only - it can be optimistic & pessimistic too
 var google_api_departure_time = "now"; // Time of API request
 var google_api_mode = "transit" 
-var google_api_travel_mode = "TRANSIT"
+// var google_api_travel_mode = "TRANSIT"
 
 // 2c. Deconstructing the API URL
 // https://maps.googleapis.com/maps/api/directions/json?origin=40.745908,-73.946989&traffic_model=best_guess&key=AIzaSyBz7jVWlbfCrns-aeLFs6cNd51rBmK2dOE&departure_time=now
+// https://maps.googleapis.com/maps/api/directions/json?origin=51.44973679770549,-0.15494462325817196&destination=QMUL&mode=transit&travelMode=transit&departure_time=now&key=AIzaSyDLP0z7zRLCIQMziYWxvNBbA9y4zqpdvlE
 var google_api_host = "maps.googleapis.com";
 var google_api_path = "/maps/api/directions/json?origin=" +
   user_origin +
@@ -34,8 +35,8 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   user_destination +
   "&mode=" +
   google_api_mode +
-  "&travelMode=" +
-  google_api_travel_mode +
+  // "&travelMode=" +
+  // google_api_travel_mode +
   "&departure_time=" +
   google_api_departure_time +
   "&key=" +
