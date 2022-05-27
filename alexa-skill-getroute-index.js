@@ -24,7 +24,7 @@ var google_api_traffic_model = "best_guess"; // For driving only - it can be opt
 var google_api_departure_time = "now"; // Time of API request
 var google_api_mode = "transit" 
 
-// 2c. Deconstructing the API URL
+// 2c. Deconstructing the Directions API URL
 // https://maps.googleapis.com/maps/api/directions/json?origin=40.745908,-73.946989&traffic_model=best_guess&key=AIzaSyBz7jVWlbfCrns-aeLFs6cNd51rBmK2dOE&departure_time=now
 var google_api_host = "maps.googleapis.com";
 var google_api_path = "/maps/api/directions/json?origin=" +
