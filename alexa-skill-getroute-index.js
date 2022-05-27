@@ -12,7 +12,7 @@ const Bookmarks = {
 
 // User and Google API configuration related variables
 // 1. Setting Coordinates for your home/origin
-var user_origin = "51.44973679770549,-0.15494462325817196"; 
+var user_origin = "51.44973679770549,-0.15494462325817196";  // Possible future update: Account linking with user account
 var user_destination = "XXXXXX"; // keep it as XXXXXX as it will be replaced later
 
 // 2. Google Maps Directions API Related Data
