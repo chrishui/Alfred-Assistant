@@ -61,7 +61,7 @@ const LaunchRequestHandler = {
 };
 
 // Get the list of bookmarked places
-const GetBookmarks = {
+const GetBookmarksIntent = {
   canHandle(handlerInput) {
     return (
       handlerInput.requestEnvelope.request.type === "IntentRequest" &&
@@ -175,7 +175,7 @@ const NoIntent = {
 };
 
 // Gracefully handle any intent that wasn't handled
-const Fallback = {
+const FallbackIntent = {
   canHandle(handlerInput) {
     return (
       handlerInput.requestEnvelope.request.type === "IntentRequest" &&
@@ -194,7 +194,7 @@ const Fallback = {
 };
 
 // Get Route Intent Handler
-const GetRoute = {
+const GetRouteIntent = {
   canHandle(handlerInput) {
     return (
       handlerInput.requestEnvelope.request.type === "IntentRequest" &&
@@ -338,12 +338,12 @@ const UnhandledHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
-        GetBookmarks,
+        GetBookmarksIntent,
         HelpIntent,
         YesIntent,
         NoIntent,
-        Fallback,
-        GetRoute
+        FallbackIntent,
+        GetRouteIntent
     )
     .addErrorHandlers(UnhandledHandler)
     .lambda();

@@ -1,4 +1,4 @@
-const https = require("https");
+const https = require("https"); // To establish HTTPS connection with Google Directions API
 
 const myfunctions = {
   // Make an HTTP Request and retrieve data either through GET or POST
