@@ -6,7 +6,7 @@ const myfunctions = {
   // postData -> in case of making a POST request, instead of GET request
   getData: function(options, postData) {
     // Async function, wait for Google to respond before Alexa reads out
-    return new Promise(function(resolve,reject) { // Will return either resolve or reject
+    return new Promise(function(resolve, reject) { // Will return either resolve or reject
       var request = https.request(options, function(response) {
         // reject if status is not 2xxx
         if (response.statusCode < 200 || response.statusCode >= 300) {
