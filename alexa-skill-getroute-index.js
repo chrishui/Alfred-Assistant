@@ -1,10 +1,14 @@
+// Author: Chris Hui
+// Site: https://www.chrishui.co.uk/
+
+/* SETUP CODE AND CONSTANTS */
+
 const Alexa = require("ask-sdk-core");
 const actions = require('./functions');
 
 // Bookmarked Places and their coordinates
 // Future Upgrade - make them come from a database like DynamoDB
-// NOTE: All entries to be in lower case, and no space between coordinates
-const Bookmarks = {
+const Bookmarks = { // NOTE: All entries to be in lower case, and no space between coordinates
   "qmul": "51.52423394319559,-0.04040667867097111",
   "lse": "51.51449884895787,-0.1163976528188817",
   "my office": "51.52206587054375,-0.0798565191478259"
@@ -36,6 +40,9 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   google_api_departure_time +
   "&key=" +
   google_api_key;
+
+  
+/* INTENT HANDLERS */
 
 // Launch Request Handler -- When a skill is launched 
 const LaunchRequestHandler = {

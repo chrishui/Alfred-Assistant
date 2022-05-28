@@ -1,3 +1,5 @@
+/* HELPER FUNCTIONS */
+
 const https = require("https"); // To establish HTTPS connection with Google Directions API
 
 const myfunctions = {
