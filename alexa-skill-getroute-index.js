@@ -9,8 +9,8 @@ const actions = require('./functions');
 // Bookmarked Places and their coordinates
 // Future Upgrade - make them come from a database like DynamoDB
 const Bookmarks = { // NOTE: All entries to be in lower case, and no space between coordinates
-  "qmul": "51.52423394319559,-0.04040667867097111",
-  "lse": "51.51449884895787,-0.1163976528188817",
+  "Queen Mary University of London": "51.52423394319559,-0.04040667867097111",
+  "London School of Economics": "51.51449884895787,-0.1163976528188817",
   "my office": "51.52206587054375,-0.0798565191478259"
 };
 
@@ -44,7 +44,6 @@ var google_api_path = "/maps/api/directions/json?origin=" +
 
 /* INTENT HANDLERS */
 
-// Launch Request Handler -- When a skill is launched 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
       return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
@@ -67,12 +66,12 @@ const LaunchRequestHandler = {
   }
 };
 
-// Get the list of bookmarked places
 const GetBookmarksIntent = {
   canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "GetBookmarks"
+      request.type === "IntentRequest" &&
+      request.intent.name === "GetBookmarks"
       );
   },
   handle(handlerInput) {
@@ -84,16 +83,13 @@ const GetBookmarksIntent = {
     
     // Now iterate through the array and create a statement of places
     for (let i=0; i<keys.length; i++) {
-      // OPTIONAL: if it is the last destination, add the keyword "and"
       if (i==keys.length-1) {
         destinations += " and ";
       }
-      
-      // add the destinations and append comma with each to make it a proper speech
       destinations += keys[i] + ", ";
     }
     
-    let speechText = "Your bookmarked places are " + destinations;
+    let speechText = "Your bookmarked locations are " + destinations;
     
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -101,7 +97,6 @@ const GetBookmarksIntent = {
   }
 };
 
-// If user asks for Help
 const HelpIntent = {
   canHandle(handlerInput) {
     return (
