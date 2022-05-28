@@ -76,7 +76,7 @@ const GetBookmarksIntent = {
       );
   },
   handle(handlerInput) {
-    console.log("GetBookmarks Intent Handler Called");
+    console.log("GetBookmarksIntent Intent Handler Called");
     
     // Get the list of Keys for Bookmarks Object
     let keys = Object.keys(Bookmarks); // Store keys as array
