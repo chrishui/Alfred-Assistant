@@ -41,6 +41,8 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   "&key=" +
   google_api_key;
 
+const SKILL_NAME = "Alfred Assistant";
+
 
 /* INTENT HANDLERS */
 
@@ -50,9 +52,9 @@ const LaunchRequestHandler = {
   },
   handle(handlerInput) {
       console.log("Launch Request Handler Called");
-      
-      let speechText = "Hi, I am Alfred, your cloud based personal assistant.";
-      let repromptText = "Sorry, I did not receive an input. Do you need help?"; // User should respond with 'yes', 'no' or no response
+
+      let speechText = `Hi, I am ${SKILL_NAME}, your cloud based personal assistant.`;
+      let repromptText = "I did not get a response, do you need help?"; // User should respond with 'yes', 'no' or no response
       
       // Setting the attributes property for data persistence
       // repromptText asks if user needs help -> need to associate 'yes' response with 'help' intent
@@ -99,23 +101,21 @@ const GetBookmarksIntent = {
 
 const HelpIntent = {
   canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "AMAZON.HelpIntent"
+      request.type === "IntentRequest" &&
+      request.intent.name === "AMAZON.HelpIntent"
       );
   },
   handle(handlerInput) {
     console.log("HelpIntent Handler Called");
     
+    let speechText = "I can obtain commute information to a destination of your choosing. I have also stored your bookmarked locations. Would you like me to read them out to you?";
+    
+    let repromptText = "Sorry, I did not receive an input. Would you like me to read out your bookmarked locations?";
+
     // Setting the attributes property for data persistence within the session
-    let attributes = {
-      type: "bookmarks"
-    };
-    handlerInput.attributesManager.setSessionAttributes(attributes);
-    
-    let speechText = "I have the ability to get travel route information to a destination of your choosing. I also have a few locations bookmarked for easy access. Would you like me to read them out to you?";
-    
-    let repromptText = "Sorry, I did not receive any input. Do you want me to read out your bookmarked destinations?";
+    handlerInput.attributesManager.setSessionAttributes({ type: "bookmarks" });
     
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -124,13 +124,13 @@ const HelpIntent = {
   }
 };
 
-
 // If the user said "Yes" to anything
 const YesIntent = {
   canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "AMAZON.YesIntent"
+      request.type === "IntentRequest" &&
+      request.intent.name === "AMAZON.YesIntent"
       );
   },
   handle(handlerInput) {
@@ -143,16 +143,16 @@ const YesIntent = {
     if (attributes.type) {
       switch (attributes.type) {
         case "bookmarks":
-          return GetBookmarks.handle(handlerInput);
+          return GetBookmarksIntent.handle(handlerInput);
         case "help":
           return HelpIntent.handle(handlerInput);
           
         default:
-          speechText = "Sorry, I do not understand how to process that.";
+          speechText = "Sorry, I am unable to process that.";
       }
       
     } else {
-      speechText = "Sorry, I am not sure what you are saying Yes for.";
+      speechText = "Sorry, I am not sure what this is referring to.";
     }
     
     return handlerInput.responseBuilder
@@ -164,9 +164,10 @@ const YesIntent = {
 // When the user says "No" to a request
 const NoIntent = {
   canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "AMAZON.NoIntent"
+      request.type === "IntentRequest" &&
+      request.intent.name === "AMAZON.NoIntent"
       );
   },
   handle(handlerInput) {
@@ -179,9 +180,10 @@ const NoIntent = {
 // Gracefully handle any intent that wasn't handled
 const FallbackIntent = {
   canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "AMAZON.FallbackIntent"
+      request.type === "IntentRequest" &&
+      request.intent.name === "AMAZON.FallbackIntent"
       );
   },
   handle(handlerInput) {
@@ -198,9 +200,10 @@ const FallbackIntent = {
 // Get Route Intent Handler
 const GetRouteIntent = {
   canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
     return (
-      handlerInput.requestEnvelope.request.type === "IntentRequest" &&
-      handlerInput.requestEnvelope.request.intent.name === "GetRoute"
+      request.type === "IntentRequest" &&
+      request.intent.name === "GetRoute"
       );
   },
   // It will be an asynchronous function
@@ -237,7 +240,7 @@ const GetRouteIntent = {
      speakdestination = destination;
    }
    
-   // If user did not provide {destination}, ask for the destination
+  //  If user did not provide {destination}, ask for the destination
    if (destination === "") {
      console.log("Destination is blank");
      
