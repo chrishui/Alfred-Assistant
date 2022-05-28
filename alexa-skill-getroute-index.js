@@ -244,8 +244,8 @@ const GetRouteIntent = {
    if (destination === "") {
      console.log("Destination is blank");
      
-     let speechText = "Where would you like to go today?";
-     let repromptText = "Sorry, I did not receive a repsonse. Would you like me to read out your bookmarked destinations?";
+     let speechText = "I didn't receive a destination, would you like me to read out your bookmarked locations instead?";
+     let repromptText = "Sorry, I did not receive a repsonse. Would you like me to read out your bookmarked locations?";
      
      handlerInput.attributesManager.setSessionAttributes({
        type: "bookmarks"
