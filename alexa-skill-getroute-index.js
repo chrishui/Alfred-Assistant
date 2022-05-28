@@ -41,7 +41,7 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   "&key=" +
   google_api_key;
 
-  
+
 /* INTENT HANDLERS */
 
 // Launch Request Handler -- When a skill is launched 
@@ -52,13 +52,13 @@ const LaunchRequestHandler = {
   handle(handlerInput) {
       console.log("Launch Request Handler Called");
       
-      let speechText = "Hi, I am Alfred, your cloud based personal assistant. You can ask me to get route information.";
+      let speechText = "Hi, I am Alfred, your cloud based personal assistant.";
       let repromptText = "Sorry, I did not receive any input. Do you need help?"; // User should respond with 'yes', 'no' or no response
       
       // Setting the attributes property for data persistence
       // repromptText asks if user needs help -> need to associate 'yes' response with 'help' intent
       // If the user says "Yes" to the repromptText question, the script will know what to do next
-      handlerInput.attributesManager.setSessionAttributes({ type: "help"});
+      handlerInput.attributesManager.setSessionAttributes({ type: "help" });
       
       return handlerInput.responseBuilder
       .speak(speechText)
