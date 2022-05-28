@@ -53,7 +53,7 @@ const LaunchRequestHandler = {
       console.log("Launch Request Handler Called");
       
       let speechText = "Hi, I am Alfred, your cloud based personal assistant.";
-      let repromptText = "Sorry, I did not receive any input. Do you need help?"; // User should respond with 'yes', 'no' or no response
+      let repromptText = "Sorry, I did not receive an input. Do you need help?"; // User should respond with 'yes', 'no' or no response
       
       // Setting the attributes property for data persistence
       // repromptText asks if user needs help -> need to associate 'yes' response with 'help' intent
