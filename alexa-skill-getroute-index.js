@@ -6,29 +6,24 @@
 const Alexa = require("ask-sdk-core");
 const actions = require('./functions');
 
-// Bookmarked Places and their coordinates
+// User data
 // Future Upgrade - make them come from a database like DynamoDB
-const Bookmarks = { // NOTE: All entries to be in lower case, and no space between coordinates
+const Bookmarks = { 
   "Queen Mary University of London": "51.52423394319559,-0.04040667867097111",
   "London School of Economics": "51.51449884895787,-0.1163976528188817",
   "my office": "51.52206587054375,-0.0798565191478259"
 };
 
-// User and Google API configuration related variables
-// 1. Setting Coordinates for your home/origin
 var user_origin = "51.44973679770549,-0.15494462325817196";  // Possible future update: Account linking with user account
-var user_destination = "XXXXXX"; // keep it as XXXXXX as it will be replaced later
+var user_destination = "XXXXXX"; // Destination to be later replaced
 
-// 2. Google Maps Directions API Related Data
-// 2a. API Key - Unique for every user
-var google_api_key = process.env.google_api_key; // CHANGE IT WITH YOUR API KEY
+// Google Directions API Related Data
+var google_api_key = process.env.google_api_key; 
 
-// 2b. Setting the configurable options for the API
-var google_api_traffic_model = "best_guess"; // For driving only - it can be optimistic & pessimistic too
+var google_api_traffic_model = "best_guess"; // For driving mode: optimistic or pesimistic 
 var google_api_departure_time = "now"; // Time of API request
 var google_api_mode = "transit" 
 
-// 2c. Deconstructing the Directions API URL
 var google_api_host = "maps.googleapis.com";
 var google_api_path = "/maps/api/directions/json?origin=" +
   user_origin +
@@ -42,7 +37,6 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   google_api_key;
 
 const SKILL_NAME = "Alfred Assistant";
-
 
 /* INTENT HANDLERS */
 
@@ -262,27 +256,19 @@ const GetRouteIntent = {
      method: "GET"
    };
    
-   // Log the complete Google URL for your review / cloudwatch
-   console.log("Google API Path --> https://" + google_api_host + final_api_path);
+   console.log("Google Directions API path: https://" + google_api_host + final_api_path);
    
    try {
      let jsondata = await actions.getData(options); // Use "await" expression that pauses the execution of the "async" funciton, until promise is resolved (getData function returns promise)
      console.log(jsondata);
-     
-     // 1. Check the status first
      let status = jsondata.status;
      
      if (status == "OK") {
        
-        // Get the duration in traffic from the json array
         let duration = jsondata.routes[0].legs[0].duration.text;
-        
-        // Get the value in seconds too so that you can do the time calculation
         let seconds = jsondata.routes[0].legs[0].duration.value;
         
-        // Initialise a new date, add 300 seconds (5 minutes) to it,
-        // to compensate for the delay it will take to get to your vehicle.
-        // Then get the hour and the minute only, and not the complete date.
+        // Arrival time, adjusted to UK timezone
         let nd = new Date();
         let ld = new Date(nd.getTime() + (seconds + 300)* 1000);
         let timeinhhmm = ld.toLocaleTimeString("en-GB", {
@@ -310,7 +296,6 @@ const GetRouteIntent = {
   }
 };
 
-// Unhandled Requests
 const UnhandledHandler = {
   canHandle() {
       return true;
