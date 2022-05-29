@@ -208,7 +208,7 @@ const GetRouteIntent = {
   },
   // It will be an asynchronous function
   async handle(handlerInput) {
-    console.log("GetRoute Intent Handler called");
+    console.log("GetRouteIntent Intent Handler called");
     
     // The slot information
     let slotdata = handlerInput.requestEnvelope.request.intent.slots; // The {destination} slot name, defined in developer portal
