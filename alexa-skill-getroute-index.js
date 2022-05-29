@@ -212,7 +212,7 @@ const GetRouteIntent = {
     
     // The slot information
     let slotdata = handlerInput.requestEnvelope.request.intent.slots; // The {destination} slot name, defined in developer portal
-    console.log("Slot Values --> " + JSON.stringify(slotdata));
+    console.log("Slot Value: " + JSON.stringify(slotdata));
     
     let speechText = "";
     
