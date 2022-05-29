@@ -22,7 +22,7 @@ const myfunctions = {
           body.push(chunk);
         });
         
-        // when process ends
+        // When process ends
         response.on("end", function() {
           try {
             body = JSON.parse(Buffer.concat(body).toString()); // Complete JSON data from Google Maps Directions API
@@ -38,15 +38,9 @@ const myfunctions = {
       request.on("error", function(error) {
         reject(error);
       });
-
-      // POST data (optional)
-      if (postData) {
-        request.write(postData);
-      }
       
-      // End the request. It's Important
       request.end();
-    }); // promise ends
+    }); 
   }
 };
 

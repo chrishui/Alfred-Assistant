@@ -234,12 +234,12 @@ const GetRouteIntent = {
      speakdestination = destination;
    }
    
-  //  If user did not provide {destination}, ask for the destination
+  //  If user did not provide destination intent slot
    if (destination === "") {
      console.log("No slot value for destination is provided");
      
      let speechText = "I didn't receive a destination, would you like me to read out your bookmarked locations instead?";
-     let repromptText = "Sorry, I did not receive a repsonse. Would you like me to read out your bookmarked locations?";
+     let repromptText = "Sorry, I did not receive a response. Would you like me to read out your bookmarked locations?";
      
      handlerInput.attributesManager.setSessionAttributes({ type: "bookmarks" });
      
@@ -291,11 +291,6 @@ const GetRouteIntent = {
           minute: "2-digit"
         });
         
-        // let timeinhhmm = ld.toLocaleTimeString("en-US", {timeZone: 'Asia/Kolkata', hour:'2-digit', minute: '2-digit'});
-        // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-        
-        // SSML - Speech Synthesis Markup Language
-        // Documentation: https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html
         speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will arrive  around " +
                      "<say-as interpret-as='time'>" + timeinhhmm + "</say-as> if you leave within 5 minutes"; 
        
