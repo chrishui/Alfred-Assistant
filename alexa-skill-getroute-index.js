@@ -285,9 +285,6 @@ const GetRouteIntent = {
         // Get the duration in traffic from the json array
         let duration = jsondata.routes[0].legs[0].duration.text;
         
-        // Google API returns "min" in response. Replace the "min" with "minute" (OPTIONAL)
-        // duration = duration.replace("min","minute");
-        
         // Get the value in seconds too so that you can do the time calculation
         let seconds = jsondata.routes[0].legs[0].duration.value;
         
