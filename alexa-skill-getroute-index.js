@@ -48,7 +48,7 @@ const LaunchRequestHandler = {
       console.log("Launch Request Handler Called");
 
       let speechText = `Hi, I am ${SKILL_NAME}, your cloud based personal assistant.`;
-      let repromptText = "I did not get a response, do you need help?"; // User should respond with 'yes', 'no' or no response
+      let repromptText = "I did not get a response, do you need help?"; 
       
       // Setting the attributes property for data persistence
       // repromptText asks if user needs help -> need to associate 'yes' response with 'help' intent
@@ -77,7 +77,6 @@ const GetBookmarksIntent = {
     let keys = Object.keys(Bookmarks); // Store keys as array
     let destinations = "";
     
-    // Now iterate through the array and create a statement of places
     for (let i=0; i<keys.length; i++) {
       if (i==keys.length-1) {
         destinations += " and ";
@@ -108,7 +107,7 @@ const HelpIntent = {
     
     let repromptText = "Sorry, I did not receive an input. Would you like me to read out your bookmarked locations?";
 
-    // Setting the attributes property for data persistence within the session
+    // Session management
     handlerInput.attributesManager.setSessionAttributes({ type: "bookmarks" });
     
     return handlerInput.responseBuilder
@@ -118,7 +117,6 @@ const HelpIntent = {
   }
 };
 
-// If the user said "Yes" to anything
 const YesIntent = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -155,7 +153,6 @@ const YesIntent = {
   }
 };
 
-// When the user says "No" to a request
 const NoIntent = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -200,7 +197,6 @@ const GetRouteIntent = {
       request.intent.name === "GetRoute"
       );
   },
-  // It will be an asynchronous function
   async handle(handlerInput) {
     console.log("GetRouteIntent Intent Handler called");
     
@@ -246,10 +242,9 @@ const GetRouteIntent = {
    console.log("Destination is not blank");
    
    // Prepare the final google API path
-   // replacing XXXXXX (user_destination variable) with a url encoded version of the actual destination
    let final_api_path = google_api_path.replace(user_destination, encodeURIComponent(destination));
    
-   // https "options"
+   // https options
    let options = {
      host: google_api_host,
      path: final_api_path,
