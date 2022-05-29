@@ -242,7 +242,7 @@ const GetRouteIntent = {
    
   //  If user did not provide {destination}, ask for the destination
    if (destination === "") {
-     console.log("Destination is blank");
+     console.log("No slot value provided");
      
      let speechText = "I didn't receive a destination, would you like me to read out your bookmarked locations instead?";
      let repromptText = "Sorry, I did not receive a repsonse. Would you like me to read out your bookmarked locations?";
