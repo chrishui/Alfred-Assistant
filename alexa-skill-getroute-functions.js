@@ -15,8 +15,6 @@ const myfunctions = {
           return reject(new Error("statusCode=" + response.statusCode));
         }
         
-        // Status is in 2xx
-        // cumulate data
         var body = [];
         response.on("data", function (chunk) {
           body.push(chunk);
