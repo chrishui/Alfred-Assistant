@@ -213,28 +213,22 @@ const GetRouteIntent = {
     // The slot information
     let slotdata = handlerInput.requestEnvelope.request.intent.slots; // The {destination} slot name, defined in developer portal
     console.log("Slot Value: " + JSON.stringify(slotdata));
-    
+
     let speechText = "";
-    
-    // destination address - can be the bookmark's coordinates or a postal address
     let destination = "";
-    
-    // what alexa sould speak out once a destination is provided
     let speakdestination = "";
-    
-   // The slot value
-   let slot = "";
+    let slot = "";
    
-   // Get the "destination" from the "slot value"
+   // Get user's destination from slot value
    if (slotdata.destination.value) {
     slot = slotdata.destination.value.toLowerCase(); // Make lower case to ensure matching of info
     console.log("Destination Slot was detected. The value is " + slot);
    }
    
-   // First try to get the value from bookmarks
+   // Try to get destination from bookmarked lcoations
    if (Bookmarks[slot]) {
      destination = Bookmarks[slot];
-     speakdestination = slot.replace("my ", "your "); // Is this necessary? Since I have 'LSE' saved for example. Alfred will say '...to reach your office'
+     speakdestination = slot.replace("my ", "your ");
    } else {
      destination = slot;
      speakdestination = destination;
@@ -242,14 +236,12 @@ const GetRouteIntent = {
    
   //  If user did not provide {destination}, ask for the destination
    if (destination === "") {
-     console.log("No slot value provided");
+     console.log("No slot value for destination is provided");
      
      let speechText = "I didn't receive a destination, would you like me to read out your bookmarked locations instead?";
      let repromptText = "Sorry, I did not receive a repsonse. Would you like me to read out your bookmarked locations?";
      
-     handlerInput.attributesManager.setSessionAttributes({
-       type: "bookmarks"
-     });
+     handlerInput.attributesManager.setSessionAttributes({ type: "bookmarks" });
      
      return handlerInput.responseBuilder
       .speak(speechText)
