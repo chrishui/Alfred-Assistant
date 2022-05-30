@@ -1,0 +1,65 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "alfred assistant",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "GetBookmarks",
+                    "slots": [],
+                    "samples": [
+                        "my saved destinations",
+                        "what are my saved places",
+                        "what are my bookmarked places",
+                        "tell me my bookmarked places"
+                    ]
+                },
+                {
+                    "name": "GetRoute",
+                    "slots": [
+                        {
+                            "name": "destination",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "how far is {destination}",
+                        "how long will it take to get to {destination}",
+                        "how long does it take to get to {destination}",
+                        "what is the route to {destination} ",
+                        "how does the traffic look like for {destination}",
+                        "how much time will it take to get to {destination}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.YesIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NoIntent",
+                    "samples": []
+                }
+            ],
+            "types": []
+        }
+    }
+}
