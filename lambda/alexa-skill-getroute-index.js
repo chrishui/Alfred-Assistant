@@ -62,36 +62,6 @@ const LaunchRequestHandler = {
   }
 };
 
-const GetBookmarksIntent = {
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return (
-      request.type === "IntentRequest" &&
-      request.intent.name === "GetBookmarks"
-      );
-  },
-  handle(handlerInput) {
-    console.log("GetBookmarksIntent Intent Handler Called");
-    
-    // Get the list of Keys for Bookmarks Object
-    let keys = Object.keys(Bookmarks); // Store keys as array
-    let destinations = "";
-    
-    for (let i=0; i<keys.length; i++) {
-      if (i==keys.length-1) {
-        destinations += " and ";
-      }
-      destinations += keys[i] + ", ";
-    }
-    
-    let speechText = "Your bookmarked locations are " + destinations;
-    
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .getResponse();
-  }
-};
-
 const HelpIntent = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -188,7 +158,36 @@ const FallbackIntent = {
   }
 };
 
-// Get Route Intent Handler
+const GetBookmarksIntent = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return (
+      request.type === "IntentRequest" &&
+      request.intent.name === "GetBookmarks"
+      );
+  },
+  handle(handlerInput) {
+    console.log("GetBookmarksIntent Intent Handler Called");
+    
+    // Get the list of Keys for Bookmarks Object
+    let keys = Object.keys(Bookmarks); // Store keys as array
+    let destinations = "";
+    
+    for (let i=0; i<keys.length; i++) {
+      if (i==keys.length-1) {
+        destinations += " and ";
+      }
+      destinations += keys[i] + ", ";
+    }
+    
+    let speechText = "Your bookmarked locations are " + destinations;
+    
+    return handlerInput.responseBuilder
+      .speak(speechText)
+      .getResponse();
+  }
+};
+
 const GetRouteIntent = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
