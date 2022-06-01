@@ -403,8 +403,8 @@ const GetLocationsIntentHandler = {
   }
 };
 
-
-exports.handler = Alexa.SkillBuilders.custom()
+const skillBuilder = Alexa.SkillBuilders.custom();
+exports.handler = skillBuilder
     .addRequestHandlers(
         LaunchRequestHandler,
         GetBookmarksIntentHandler,
@@ -420,8 +420,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         GetLocationsIntentHandler
     )
     .addErrorHandlers(UnhandledHandler)
-    .withTableName(dynamoDBTableName)
-    .withAutoCreateTable(true)
+    // .withTableName(dynamoDBTableName)
+    // .withAutoCreateTable(true)
     .lambda();
     
 

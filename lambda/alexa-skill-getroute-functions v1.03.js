@@ -69,8 +69,7 @@ myFunctions.prototype.removeLocation = (location, userID) => {
           Key: {
               "userId"    : userID,
               "location"  : location
-          },
-          ConditionExpression: "attribute_exists(location)"
+          }
       }
       docClient.delete(params, function (err, data) {
           if (err) {
