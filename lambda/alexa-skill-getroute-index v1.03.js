@@ -4,27 +4,16 @@
 /* SETUP CODE AND CONSTANTS */
 
 const Alexa = require("ask-sdk-core");
-const helperFunctions = require('./functions'); // Helper functions
-const dynamoDBTableName = "dynamodb_alfred_location_bookmarks"
+const helperFunctions = require('./functions'); 
 
 // User data
-// Future Upgrade - make them come from a database like DynamoDB
-const Bookmarks = { 
-  "Queen Mary University of London": "51.52423394319559,-0.04040667867097111",
-  "London School of Economics": "51.51449884895787,-0.1163976528188817",
-  "my office": "51.52206587054375,-0.0798565191478259"
-};
-
 var user_origin = "51.44973679770549,-0.15494462325817196";  // Possible future update: Account linking with user account
 var user_destination = "XXXXXX"; // Destination to be later replaced
 
 // Google Directions API Related Data
 var google_api_key = process.env.google_api_key; 
-
-var google_api_traffic_model = "best_guess"; // For driving mode: optimistic or pesimistic 
 var google_api_departure_time = "now"; // Time of API request
 var google_api_mode = "transit" 
-
 var google_api_host = "maps.googleapis.com";
 var google_api_path = "/maps/api/directions/json?origin=" +
   user_origin +
@@ -155,36 +144,6 @@ const UnhandledHandler = {
   }
 };
 
-const GetBookmarksIntentHandler = {
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return (
-      request.type === "IntentRequest" &&
-      request.intent.name === "GetBookmarks"
-      );
-  },
-  handle(handlerInput) {
-    console.log("GetBookmarksIntent Intent Handler Called");
-    
-    // Get the list of Keys for Bookmarks Object
-    let keys = Object.keys(Bookmarks); // Store keys as array
-    let destinations = "";
-    
-    for (let i=0; i<keys.length; i++) {
-      if (i==keys.length-1) {
-        destinations += " and ";
-      }
-      destinations += keys[i] + ", ";
-    }
-    
-    let speechText = "Your bookmarked locations are " + destinations;
-    
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .getResponse();
-  }
-};
-
 const GetRouteIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -209,15 +168,8 @@ const GetRouteIntentHandler = {
    if (slotdata.destination.value) { // The {destination} slot value
     slot = slotdata.destination.value.toLowerCase(); // Make lower case to ensure matching of info
     console.log("Destination Slot was detected. The value is " + slot);
-   }
-   
-   // Try to get destination from bookmarked lcoations
-   if (Bookmarks[slot]) {
-     destination = Bookmarks[slot];
-     speakdestination = slot.replace("my ", "your ");
-   } else {
-     destination = slot;
-     speakdestination = destination;
+    destination = slot;
+    speakdestination = destination;
    }
    
   //  If user did not provide destination intent slot
@@ -383,9 +335,9 @@ const GetLocationsIntentHandler = {
     const userID = handlerInput.requestEnvelope.context.System.user.userId; 
     return helperFunctions.getLocations(userID)
       .then((data) => {
-        var speechText = "Your saved locations are "
+        var speechText = "Your bookmarked locations are "
         if (data.length == 0) {
-          speechText = "You do not have any saved locations yet, add location by saving add location "
+          speechText = "You do not have any bookmarked locations yet, add location by saving add location "
         } else {
           speechText += data.map(e => e.location).join(", ")
         }
@@ -407,7 +359,6 @@ const skillBuilder = Alexa.SkillBuilders.custom();
 exports.handler = skillBuilder
     .addRequestHandlers(
         LaunchRequestHandler,
-        GetBookmarksIntentHandler,
         HelpIntentHandler,
         YesIntentHandler,
         NoIntentHandler,
