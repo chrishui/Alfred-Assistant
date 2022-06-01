@@ -37,7 +37,7 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   "&key=" +
   google_api_key;
 
-const SKILL_NAME = "Alfred Assistant";
+const SKILL_NAME = "Alfred assistant";
 const GENERAL_REPROMPT = "What would you like to do?";
 
 /* INTENT HANDLERS */
@@ -123,7 +123,6 @@ const NoIntentHandler = {
   }
 };
 
-// Gracefully handle any intent that wasn't handled
 const FallbackIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
@@ -251,7 +250,7 @@ const GetRouteIntentHandler = {
    console.log("Google Directions API path: https://" + google_api_host + final_api_path);
    
    try {
-     let jsondata = await helperFunctions.getDirectionsData(options); // Use "await" expression that pauses the execution of the "async" funciton, until promise is resolved (getData function returns promise)
+     let jsondata = await helperFunctions.getDirectionsData(options); // Use "await" expression that pauses the execution of the "async" funciton, until promise is resolved (getDirectionsData function returns promise)
      console.log(jsondata);
      let status = jsondata.status;
      
