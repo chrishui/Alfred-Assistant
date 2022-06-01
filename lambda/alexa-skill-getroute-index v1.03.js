@@ -214,7 +214,7 @@ const GetRouteIntent = {
     console.log("GetRouteIntent Intent Handler called");
     
     // The slot information
-    let slotdata = handlerInput.requestEnvelope.request.intent.slots; // The {destination} slot name, defined in developer portal
+    let slotdata = handlerInput.requestEnvelope.request.intent.slots; 
     console.log("Slot Value: " + JSON.stringify(slotdata));
 
     let speechText = "";
@@ -223,7 +223,7 @@ const GetRouteIntent = {
     let slot = "";
    
    // Get user's destination from slot value
-   if (slotdata.destination.value) {
+   if (slotdata.destination.value) { // The {destination} slot value
     slot = slotdata.destination.value.toLowerCase(); // Make lower case to ensure matching of info
     console.log("Destination Slot was detected. The value is " + slot);
    }
@@ -303,6 +303,50 @@ const GetRouteIntent = {
    
   }
 };
+
+const InProgressAddLocationIntent = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddLocationIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+}
+
+const AddLocationIntent = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddLocationIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder} = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slotdata = handlerInput.requestEnvelope.request.intent.slots;
+    const location = slots.location.value; // The {location} slot value
+    return dbHelper.addMovie(movieName, userID)
+      .then((data) => {
+        const speechText = `You have added movie ${movieName}. You can say add to add another one or remove to remove movie`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while saving movie", err);
+        const speechText = "we cannot save your movie right now. Try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
 
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
