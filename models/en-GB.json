@@ -24,16 +24,6 @@
                     "samples": []
                 },
                 {
-                    "name": "GetBookmarks",
-                    "slots": [],
-                    "samples": [
-                        "my saved destinations",
-                        "what are my saved places",
-                        "what are my bookmarked places",
-                        "tell me my bookmarked places"
-                    ]
-                },
-                {
                     "name": "GetRoute",
                     "slots": [
                         {
@@ -42,6 +32,10 @@
                         }
                     ],
                     "samples": [
+                        "the time to {destination}",
+                        "time to {destination}",
+                        "how much time to get to {destination} ",
+                        "how long will it take me to get to {destination}",
                         "how far is {destination}",
                         "how long will it take to get to {destination}",
                         "how long does it take to get to {destination}",
@@ -57,9 +51,142 @@
                 {
                     "name": "AMAZON.NoIntent",
                     "samples": []
+                },
+                {
+                    "name": "AddLocationIntent",
+                    "slots": [
+                        {
+                            "name": "location",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "add {location} to my bookmarked locations",
+                        "to add {location} to my bookmarked locations",
+                        "to add {location} to my bookmarks",
+                        "to add {location}",
+                        "Add {location} to my bookmarks",
+                        "Add",
+                        "Add {location}"
+                    ]
+                },
+                {
+                    "name": "RemoveLocationIntent",
+                    "slots": [
+                        {
+                            "name": "location",
+                            "type": "AMAZON.SearchQuery"
+                        }
+                    ],
+                    "samples": [
+                        "remove {location} from my bookmarked locations",
+                        "to remove {location} from my bookmarked locations",
+                        "to remove {location} from my bookmarks",
+                        "to remove {location}",
+                        "Remove {location} from my bookmarks",
+                        "Remove",
+                        "Remove {location}"
+                    ]
+                },
+                {
+                    "name": "GetLocationsIntent",
+                    "slots": [],
+                    "samples": [
+                        "to get my saved bookmarks",
+                        "to get my bookmarks",
+                        "to get my locations",
+                        "to get my bookmarked locations",
+                        "get my saved bookmarks",
+                        "get my saved locations",
+                        "get my bookmarks",
+                        "get my locations",
+                        "get my bookmarked locations"
+                    ]
                 }
             ],
             "types": []
-        }
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "AddLocationIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "location",
+                            "type": "AMAZON.SearchQuery",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.67747748648.323348015131"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "RemoveLocationIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "location",
+                            "type": "AMAZON.SearchQuery",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1161930310150.928512163082"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "GetRoute",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "destination",
+                            "type": "AMAZON.SearchQuery",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1023839929195.411316695039"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.67747748648.323348015131",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What location would you like to bookmark?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1161930310150.928512163082",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What bookmarked location would you like to remove?"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.1023839929195.411316695039",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Where would you like to go?"
+                    }
+                ]
+            }
+        ]
     }
 }
