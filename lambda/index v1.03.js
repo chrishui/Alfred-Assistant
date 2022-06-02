@@ -130,7 +130,7 @@ const FallbackIntentHandler = {
   }
 };
 
-const UnhandledHandler = {
+const ErrorHandler = {
   canHandle() {
       return true;
   },
@@ -369,7 +369,7 @@ exports.handler = skillBuilder
         RemoveLocationIntentHandler,
         GetLocationsIntentHandler
     )
-    .addErrorHandlers(UnhandledHandler)
+    .addErrorHandlers(ErrorHandler)
     // .withTableName(dynamoDBTableName)
     // .withAutoCreateTable(true)
     .lambda();
