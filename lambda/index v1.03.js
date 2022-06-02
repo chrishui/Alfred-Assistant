@@ -106,7 +106,6 @@ const NoIntentHandler = {
       );
   },
   handle(handlerInput) {
-    console.log("NoIntent intent handler called");
     return handlerInput.responseBuilder
       .getResponse();
   }
