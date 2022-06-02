@@ -26,7 +26,7 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   "&key=" +
   google_api_key;
 
-const SKILL_NAME = "Alfred assistant";
+const SKILL_NAME = "Alfred directions";
 const GENERAL_REPROMPT = "What would you like to do?";
 
 /* INTENT HANDLERS */
@@ -36,7 +36,7 @@ const LaunchRequestHandler = {
       return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-      let speechText = `Hi, I am ${SKILL_NAME}, your cloud based personal assistant.`;
+      let speechText = `Hi, welcome to ${SKILL_NAME}, Would you like help with directions?`;
       handlerInput.attributesManager.setSessionAttributes({ type: "help" }); // Session management
       return handlerInput.responseBuilder
       .speak(speechText)
