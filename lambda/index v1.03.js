@@ -135,11 +135,12 @@ const ErrorHandler = {
       return true;
   },
   handle(handlerInput, error) {
-      console.log(`Error Handler : ${error.message}`);
-      
-      return handlerInput.responseBuilder
-        .speak('Sorry, I am unable to understand. Please try again.')
-        .getResponse();
+    console.log(`Error request: ${JSON.stringify(handlerInput.requestEnvelope.request)}`);
+    console.log(`Error handled: ${error.message}`);
+    
+    return handlerInput.responseBuilder
+      .speak('Sorry, I am unable to understand. Please try again.')
+      .getResponse();
   }
 };
 
