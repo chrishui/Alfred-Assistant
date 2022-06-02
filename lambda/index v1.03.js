@@ -139,7 +139,7 @@ const ErrorHandler = {
     console.log(`Error handled: ${error.message}`);
     
     return handlerInput.responseBuilder
-      .speak('Sorry, I am unable to understand. Please try again.')
+      .speak("Sorry, I am unable to understand. Please try again.")
       .getResponse();
   }
 };
