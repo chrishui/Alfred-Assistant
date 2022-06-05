@@ -36,7 +36,7 @@ const LaunchRequestHandler = {
       return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-      let speechText = `Hi, welcome to ${SKILL_NAME}, Would you like help with directions?`;
+      let speechText = `Hi, welcome to ${SKILL_NAME}. What would you like help with?`;
       handlerInput.attributesManager.setSessionAttributes({ type: "help" }); // Session management
       return handlerInput.responseBuilder
       .speak(speechText)
