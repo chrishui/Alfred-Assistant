@@ -245,7 +245,7 @@ const GetRouteIntentHandler = {
           minute: "2-digit"
         });
         
-        speechText = "By public transportation, it will take you " + duration + " to reach " + speakdestination + ". You will arrive around " +
+        speechText = "By public transportation, it will take you " + duration + " to reach " + speakdestination + ". You will arrive at around " +
                      "<say-as interpret-as='time'>" + timeinhhmm + 
                      "</say-as>. If you drove, it will take you " + duration_driving + " instead, and you will arrive at around " +
                      "<say-as interpret-as='time'>" + timeinhhmm_driving + 
