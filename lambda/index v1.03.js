@@ -25,6 +25,7 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   google_api_departure_time +
   "&key=" +
   google_api_key;
+var google_api_path_driving = google_api_path.replace("transit", "driving");
 
 const SKILL_NAME = "Alfred directions";
 const GENERAL_REPROMPT = "What would you like to do?";
@@ -198,6 +199,13 @@ const GetRouteIntentHandler = {
      path: final_api_path,
      method: "GET"
    };
+
+   let final_api_path_driving = google_api_path_driving.replace(user_destination, encodeURIComponent(destination));
+   let options_driving = {
+    host: google_api_host,
+    path: final_api_path_driving,
+    method: "GET"
+  };
    
    console.log("Google Directions API path: https://" + google_api_host + final_api_path);
    
@@ -205,9 +213,13 @@ const GetRouteIntentHandler = {
      let jsondata = await helperFunctions.getDirectionsData(options); // Use "await" expression that pauses the execution of the "async" funciton, until promise is resolved (getDirectionsData function returns promise)
      console.log(jsondata);
      let status = jsondata.status;
+
+     let jsondata_driving = await helperFunctions.getDirectionsData(options_driving);
+     let status_driving = jsondata_driving.status;
      
-     if (status == "OK") {
-       
+     if (status == "OK" && status_driving == "OK") {
+
+        // Public transportation
         let duration = jsondata.routes[0].legs[0].duration.text;
         let seconds = jsondata.routes[0].legs[0].duration.value;
         
@@ -219,9 +231,25 @@ const GetRouteIntentHandler = {
           hour: "2-digit",
           minute: "2-digit"
         });
+
+        // Driving
+        let duration_driving = jsondata_driving.routes[0].legs[0].duration.text;
+        let seconds_driving = jsondata_driving.routes[0].legs[0].duration.value;
+
+        // Arrival time for dribving
+        let nd_driving = new Date();
+        let ld_driving = new Date(nd_driving.getTime() + (seconds_driving + 300)* 1000);
+        let timeinhhmm_driving = ld_driving.toLocaleTimeString("en-GB", {
+          timeZone: 'Europe/London',
+          hour: "2-digit",
+          minute: "2-digit"
+        });
         
-        speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will arrive  around " +
-                     "<say-as interpret-as='time'>" + timeinhhmm + "</say-as> if you leave within 5 minutes"; 
+        speechText = "By public transportation, it will take you " + duration + " to reach " + speakdestination + ". You will arrive around " +
+                     "<say-as interpret-as='time'>" + timeinhhmm + 
+                     "</say-as>. If you drove, it will take you " + duration_driving + " instead, and you will arrive at around " +
+                     "<say-as interpret-as='time'>" + timeinhhmm_driving + 
+                     "</say-as> if you leave within 5 minutes"; 
        
      } else {
        speechText = "Sorry, I was not able to get traffic information for your destination " + speakdestination + ". Please try a different destination";
@@ -375,4 +403,3 @@ exports.handler = skillBuilder
     // .withAutoCreateTable(true)
     .lambda();
     
-
