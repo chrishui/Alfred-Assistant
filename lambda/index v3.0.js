@@ -8,7 +8,7 @@ const helperFunctions = require('./functions');
 
 // User data
 var user_origin = process.env.user_origin;  // Possible future update: Account linking with user account
-var user_destination = "XXXXXX"; // User destination will be changed upon user input
+var user_destination = "XXXXXX"; // Destination value set upon user input
 
 // Google Directions API Related Data
 var google_api_key = process.env.google_api_key; 
