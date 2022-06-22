@@ -80,7 +80,7 @@ myFunctions.prototype.removeLocation = (location, userID) => {
           console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
           resolve()
       })
-  }); 
+  });
 }
 
 myFunctions.prototype.getLocations = (userID) => {
