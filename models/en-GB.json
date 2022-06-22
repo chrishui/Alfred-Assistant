@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "alfred assistant",
+            "invocationName": "alfred directions",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
