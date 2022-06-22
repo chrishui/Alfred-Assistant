@@ -8,11 +8,11 @@ const helperFunctions = require('./functions');
 
 // User data
 var user_origin = process.env.user_origin;  // Possible future update: Account linking with user account
-var user_destination = "XXXXXX"; // Destination to be later replaced
+var user_destination = "XXXXXX"; // User destination will be changed upon user input
 
 // Google Directions API Related Data
 var google_api_key = process.env.google_api_key; 
-var google_api_departure_time = "now"; // Time of API request
+var google_api_departure_time = "now"; 
 var google_api_mode = "transit" 
 var google_api_host = "maps.googleapis.com";
 var google_api_path = "/maps/api/directions/json?origin=" +
