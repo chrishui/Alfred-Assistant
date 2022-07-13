@@ -4,26 +4,16 @@
 /* SETUP CODE AND CONSTANTS */
 
 const Alexa = require("ask-sdk-core");
-const actions = require('./functions');
+const helperFunctions = require('./functions'); 
 
 // User data
-// Future Upgrade - make them come from a database like DynamoDB
-const Bookmarks = { 
-  "Queen Mary University of London": "51.52423394319559,-0.04040667867097111",
-  "London School of Economics": "51.51449884895787,-0.1163976528188817",
-  "my office": "51.52206587054375,-0.0798565191478259"
-};
-
-var user_origin = "51.44973679770549,-0.15494462325817196";  // Possible future update: Account linking with user account
-var user_destination = "XXXXXX"; // Destination to be later replaced
+var user_origin = process.env.user_origin;  // Possible future update: Account linking with user account
+var user_destination = "XXXXXX"; // Destination value set upon user input
 
 // Google Directions API Related Data
 var google_api_key = process.env.google_api_key; 
-
-var google_api_traffic_model = "best_guess"; // For driving mode: optimistic or pesimistic 
-var google_api_departure_time = "now"; // Time of API request
+var google_api_departure_time = "now"; 
 var google_api_mode = "transit" 
-
 var google_api_host = "maps.googleapis.com";
 var google_api_path = "/maps/api/directions/json?origin=" +
   user_origin +
@@ -35,8 +25,10 @@ var google_api_path = "/maps/api/directions/json?origin=" +
   google_api_departure_time +
   "&key=" +
   google_api_key;
+var google_api_path_driving = google_api_path.replace("transit", "driving");
 
-const SKILL_NAME = "Alfred Assistant";
+const SKILL_NAME = "Alfred directions";
+const GENERAL_REPROMPT = "What would you like to do?";
 
 /* INTENT HANDLERS */
 
@@ -45,24 +37,16 @@ const LaunchRequestHandler = {
       return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-      console.log("Launch Request Handler Called");
-
-      let speechText = `Hi, I am ${SKILL_NAME}, your cloud based personal assistant.`;
-      let repromptText = "I did not get a response, do you need help?"; 
-      
-      // Setting the attributes property for data persistence
-      // repromptText asks if user needs help -> need to associate 'yes' response with 'help' intent
-      // If the user says "Yes" to the repromptText question, the script will know what to do next
-      handlerInput.attributesManager.setSessionAttributes({ type: "help" });
-      
+      let speechText = `Hi, welcome to ${SKILL_NAME}. What would you like help with?`;
+      handlerInput.attributesManager.setSessionAttributes({ type: "help" }); // Session management
       return handlerInput.responseBuilder
       .speak(speechText)
-      .reprompt(repromptText)
+      .reprompt(GENERAL_REPROMPT)
       .getResponse();
   }
 };
 
-const HelpIntent = {
+const HelpIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return (
@@ -71,15 +55,9 @@ const HelpIntent = {
       );
   },
   handle(handlerInput) {
-    console.log("HelpIntent Handler Called");
-    
     let speechText = "I can obtain commute information to a destination of your choosing. I have also stored your bookmarked locations. Would you like me to read them out to you?";
-    
     let repromptText = "Sorry, I did not receive an input. Would you like me to read out your bookmarked locations?";
-
-    // Session management
-    handlerInput.attributesManager.setSessionAttributes({ type: "bookmarks" });
-    
+    handlerInput.attributesManager.setSessionAttributes({ type: "bookmarks" }); // Session management
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(repromptText)
@@ -87,7 +65,7 @@ const HelpIntent = {
   }
 };
 
-const YesIntent = {
+const YesIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return (
@@ -96,10 +74,7 @@ const YesIntent = {
       );
   },
   handle(handlerInput) {
-    console.log("AMAZON.YesIntent intent handler called");
-    
-    // Session management
-    let attributes = handlerInput.attributesManager.getSessionAttributes();
+    let attributes = handlerInput.attributesManager.getSessionAttributes(); // Session management
     let speechText = "";
     
     if (attributes.type) {
@@ -123,7 +98,7 @@ const YesIntent = {
   }
 };
 
-const NoIntent = {
+const NoIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return (
@@ -132,14 +107,12 @@ const NoIntent = {
       );
   },
   handle(handlerInput) {
-    console.log("NoIntent intent handler called");
     return handlerInput.responseBuilder
       .getResponse();
   }
 };
 
-// Gracefully handle any intent that wasn't handled
-const FallbackIntent = {
+const FallbackIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return (
@@ -150,7 +123,7 @@ const FallbackIntent = {
   handle(handlerInput) {
     console.log("FallbackIntent Handler called");
     
-    let speechText = "Sorry, I wasn't able to understand what you said. Please try again.";
+    let speechText = "Sorry, I wasn't able to understand. Please try again.";
     
     return handlerInput.responseBuilder
       .speak(speechText)
@@ -158,37 +131,21 @@ const FallbackIntent = {
   }
 };
 
-const GetBookmarksIntent = {
-  canHandle(handlerInput) {
-    const request = handlerInput.requestEnvelope.request;
-    return (
-      request.type === "IntentRequest" &&
-      request.intent.name === "GetBookmarks"
-      );
+const ErrorHandler = {
+  canHandle() {
+      return true;
   },
-  handle(handlerInput) {
-    console.log("GetBookmarksIntent Intent Handler Called");
-    
-    // Get the list of Keys for Bookmarks Object
-    let keys = Object.keys(Bookmarks); // Store keys as array
-    let destinations = "";
-    
-    for (let i=0; i<keys.length; i++) {
-      if (i==keys.length-1) {
-        destinations += " and ";
-      }
-      destinations += keys[i] + ", ";
-    }
-    
-    let speechText = "Your bookmarked locations are " + destinations;
+  handle(handlerInput, error) {
+    console.log(`Error request: ${JSON.stringify(handlerInput.requestEnvelope.request)}`);
+    console.log(`Error handled: ${error.message}`);
     
     return handlerInput.responseBuilder
-      .speak(speechText)
+      .speak("Sorry, I am unable to understand. Please try again.")
       .getResponse();
   }
 };
 
-const GetRouteIntent = {
+const GetRouteIntentHandler = {
   canHandle(handlerInput) {
     const request = handlerInput.requestEnvelope.request;
     return (
@@ -200,7 +157,7 @@ const GetRouteIntent = {
     console.log("GetRouteIntent Intent Handler called");
     
     // The slot information
-    let slotdata = handlerInput.requestEnvelope.request.intent.slots; // The {destination} slot name, defined in developer portal
+    let slotdata = handlerInput.requestEnvelope.request.intent.slots; 
     console.log("Slot Value: " + JSON.stringify(slotdata));
 
     let speechText = "";
@@ -209,18 +166,11 @@ const GetRouteIntent = {
     let slot = "";
    
    // Get user's destination from slot value
-   if (slotdata.destination.value) {
+   if (slotdata.destination.value) { // The {destination} slot value
     slot = slotdata.destination.value.toLowerCase(); // Make lower case to ensure matching of info
     console.log("Destination Slot was detected. The value is " + slot);
-   }
-   
-   // Try to get destination from bookmarked lcoations
-   if (Bookmarks[slot]) {
-     destination = Bookmarks[slot];
-     speakdestination = slot.replace("my ", "your ");
-   } else {
-     destination = slot;
-     speakdestination = destination;
+    destination = slot;
+    speakdestination = destination;
    }
    
   //  If user did not provide destination intent slot
@@ -249,16 +199,27 @@ const GetRouteIntent = {
      path: final_api_path,
      method: "GET"
    };
+
+   let final_api_path_driving = google_api_path_driving.replace(user_destination, encodeURIComponent(destination));
+   let options_driving = {
+    host: google_api_host,
+    path: final_api_path_driving,
+    method: "GET"
+  };
    
    console.log("Google Directions API path: https://" + google_api_host + final_api_path);
    
    try {
-     let jsondata = await actions.getData(options); // Use "await" expression that pauses the execution of the "async" funciton, until promise is resolved (getData function returns promise)
+     let jsondata = await helperFunctions.getDirectionsData(options); // Use "await" expression that pauses the execution of the "async" funciton, until promise is resolved (getDirectionsData function returns promise)
      console.log(jsondata);
      let status = jsondata.status;
+
+     let jsondata_driving = await helperFunctions.getDirectionsData(options_driving);
+     let status_driving = jsondata_driving.status;
      
-     if (status == "OK") {
-       
+     if (status == "OK" && status_driving == "OK") {
+
+        // Public transportation
         let duration = jsondata.routes[0].legs[0].duration.text;
         let seconds = jsondata.routes[0].legs[0].duration.value;
         
@@ -270,9 +231,25 @@ const GetRouteIntent = {
           hour: "2-digit",
           minute: "2-digit"
         });
+
+        // Driving
+        let duration_driving = jsondata_driving.routes[0].legs[0].duration.text;
+        let seconds_driving = jsondata_driving.routes[0].legs[0].duration.value;
+
+        // Arrival time for dribving
+        let nd_driving = new Date();
+        let ld_driving = new Date(nd_driving.getTime() + (seconds_driving + 300)* 1000);
+        let timeinhhmm_driving = ld_driving.toLocaleTimeString("en-GB", {
+          timeZone: 'Europe/London',
+          hour: "2-digit",
+          minute: "2-digit"
+        });
         
-        speechText = "It will take you " + duration + " to reach " + speakdestination + ". You will arrive  around " +
-                     "<say-as interpret-as='time'>" + timeinhhmm + "</say-as> if you leave within 5 minutes"; 
+        speechText = "By public transportation, it will take you " + duration + " to reach " + speakdestination + ". You will arrive at around " +
+                     "<say-as interpret-as='time'>" + timeinhhmm + 
+                     "</say-as>. If you drove, it will take you " + duration_driving + " instead, and you will arrive at around " +
+                     "<say-as interpret-as='time'>" + timeinhhmm_driving + 
+                     "</say-as> if you leave within 5 minutes"; 
        
      } else {
        speechText = "Sorry, I was not able to get traffic information for your destination " + speakdestination + ". Please try a different destination";
@@ -290,30 +267,139 @@ const GetRouteIntent = {
   }
 };
 
-const UnhandledHandler = {
-  canHandle() {
-      return true;
+const InProgressAddLocationIntentHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'AddLocationIntent' &&
+      request.dialogState !== 'COMPLETED';
   },
-  handle(handlerInput, error) {
-      console.log(`Error Handler : ${error.message}`);
-      
-      return handlerInput.responseBuilder
-        .speak('Sorry, I am unable to understand. Please try again.')
-        .getResponse();
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
   }
 };
 
-exports.handler = Alexa.SkillBuilders.custom()
+const AddLocationIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'AddLocationIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder} = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slotdata = handlerInput.requestEnvelope.request.intent.slots;
+    const location = slotdata.location.value; // The {location} slot value
+    return helperFunctions.addLocation(location, userID)
+      .then((data) => {
+        const speechText = `You have added location ${location}. You can say add to add another one or remove to remove location`;
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        console.log("Error occured while saving location", err);
+        const speechText = "we cannot save your location right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  },
+};
+
+const InProgressRemoveLocationIntentHandler = {
+  canHandle(handlerInput) {
+    const request = handlerInput.requestEnvelope.request;
+    return request.type === 'IntentRequest' &&
+      request.intent.name === 'RemoveLocationIntent' &&
+      request.dialogState !== 'COMPLETED';
+  },
+  handle(handlerInput) {
+    const currentIntent = handlerInput.requestEnvelope.request.intent;
+    return handlerInput.responseBuilder
+      .addDelegateDirective(currentIntent)
+      .getResponse();
+  }
+};
+
+const RemoveLocationIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'RemoveLocationIntent';
+  }, 
+  handle(handlerInput) {
+    const {responseBuilder} = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    const slotdata = handlerInput.requestEnvelope.request.intent.slots;
+    const location = slotdata.location.value; // The {location} slot value
+    return helperFunctions.removeLocation(location, userID)
+      .then((data) => {
+        const speechText = `You have removed location ${location}, you can add another one by saying add`
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        const speechText = `You do not have a location ${location}, you can add it by saying add`
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+  }
+};
+
+const GetLocationsIntentHandler = {
+  canHandle(handlerInput) {
+    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+      && handlerInput.requestEnvelope.request.intent.name === 'GetLocationsIntent';
+  },
+  async handle(handlerInput) {
+    const {responseBuilder} = handlerInput;
+    const userID = handlerInput.requestEnvelope.context.System.user.userId; 
+    return helperFunctions.getLocations(userID)
+      .then((data) => {
+        var speechText = "Your bookmarked locations are "
+        if (data.length == 0) {
+          speechText = "You do not have any bookmarked locations yet, add location by saving add location "
+        } else {
+          speechText += data.map(e => e.location).join(", ")
+        }
+        return responseBuilder
+          .speak(speechText)
+          .reprompt(GENERAL_REPROMPT)
+          .getResponse();
+      })
+      .catch((err) => {
+        const speechText = "we cannot get your saved locations right now. Please try again!"
+        return responseBuilder
+          .speak(speechText)
+          .getResponse();
+      })
+  }
+};
+
+const skillBuilder = Alexa.SkillBuilders.custom();
+exports.handler = skillBuilder
     .addRequestHandlers(
         LaunchRequestHandler,
-        GetBookmarksIntent,
-        HelpIntent,
-        YesIntent,
-        NoIntent,
-        FallbackIntent,
-        GetRouteIntent
+        HelpIntentHandler,
+        YesIntentHandler,
+        NoIntentHandler,
+        FallbackIntentHandler,
+        GetRouteIntentHandler,
+        InProgressAddLocationIntentHandler,
+        AddLocationIntentHandler,
+        InProgressRemoveLocationIntentHandler,
+        RemoveLocationIntentHandler,
+        GetLocationsIntentHandler
     )
-    .addErrorHandlers(UnhandledHandler)
+    .addErrorHandlers(ErrorHandler)
+    // .withTableName(dynamoDBTableName)
+    // .withAutoCreateTable(true)
     .lambda();
     
-
